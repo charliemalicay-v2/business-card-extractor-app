@@ -45,7 +45,9 @@ export default function CardsListPage() {
         <CardHeader className="flex flex-row items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <CardTitle>Card records</CardTitle>
-            <NeedsReviewBadgeCount />
+            <NeedsReviewBadgeCount
+              knownTotal={status === "needs_review" ? data?.total : undefined}
+            />
           </div>
           <CardListFilters value={status} onChange={handleStatusChange} />
         </CardHeader>

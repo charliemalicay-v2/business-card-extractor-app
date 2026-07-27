@@ -37,7 +37,15 @@ export function FieldRow({
           </div>
         </div>
       ) : (
-        <p className="text-sm">{value.value ?? "—"}</p>
+        <div>
+          <p className="text-sm">{value.value ?? "—"}</p>
+          {value.status === "unverified" && (
+            <p className="text-xs text-muted-foreground">
+              Only one source (OCR/LLM) was available — nothing to cross-check
+              against.
+            </p>
+          )}
+        </div>
       )}
     </div>
   );

@@ -47,16 +47,24 @@ Traces to `requirements.md` and `design.md` in this same directory.
     refetch after review resolution — flagged in PR #2 review, non-blocking
   - _Requirements: 6.3, 3.5_
 
-- [ ] 3. Shared UI components
-- [ ] 3.1 `StatusBadge` (record-level: confirmed/needs_review) and field-level status
+- [x] 3. Shared UI components
+- [x] 3.1 `StatusBadge` (record-level: confirmed/needs_review) and field-level status
       badge/icon (confirmed/unverified/conflict)
+  - Implemented as `StatusBadge` + `FieldStatusBadge` in
+    `components/cards/StatusBadge.tsx`
   - _Requirements: 2.2, 2.3_
-- [ ] 3.2 `QrIndicator` (detected/decoded icons)
+- [x] 3.2 `QrIndicator` (detected/decoded icons)
+  - `components/cards/QrIndicator.tsx` — three states: no QR / detected-not-decoded /
+    detected-and-decoded
   - _Requirements: 2.5_
-- [ ] 3.3 `RawOcrText` collapsible section, closed by default
+- [x] 3.3 `RawOcrText` collapsible section, closed by default
+  - `components/cards/RawOcrText.tsx`
   - _Requirements: 2.6_
-- [ ] 3.4 `UploadErrorAlert` / generic `ApiErrorAlert`: renders `ERROR_COPY` title +
+- [x] 3.4 `UploadErrorAlert` / generic `ApiErrorAlert`: renders `ERROR_COPY` title +
       API `message` + `stage` (when present) + conditional Retry button
+  - `components/shared/ApiErrorAlert.tsx` — marked `"use client"` (renders an
+    interactive Retry button); must be rendered from a client parent, which holds for
+    all real usage sites (Tasks 4-6)
   - _Requirements: 1.6, 5.1, 5.2_
 
 - [ ] 4. Upload flow (`/`)

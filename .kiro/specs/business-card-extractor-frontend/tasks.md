@@ -2,17 +2,23 @@
 
 Traces to `requirements.md` and `design.md` in this same directory.
 
-- [ ] 1. Project scaffolding
-- [ ] 1.1 Initialize Next.js (App Router, TypeScript) app; install axios,
+- [x] 1. Project scaffolding
+- [x] 1.1 Initialize Next.js (App Router, TypeScript) app; install axios,
       @tanstack/react-query, tailwindcss, and init shadcn/ui
   - Set up `app/`, `components/`, `lib/` directories per design.md
   - Configure `NEXT_PUBLIC_API_BASE_URL` in `.env.local` (default
     `http://localhost:8000`) and `.env.example`
   - _Requirements: 6.1, 6.4, 6.5_
-- [ ] 1.2 Add `QueryClientProvider` and shadcn `Toaster` to `app/layout.tsx`
+- [x] 1.2 Add `QueryClientProvider` and shadcn `Toaster` to `app/layout.tsx`
   - _Requirements: 6.3_
-- [ ] 1.3 Generate baseline shadcn/ui components: button, badge, card, table, select,
+- [x] 1.3 Generate baseline shadcn/ui components: button, badge, card, table, select,
       pagination, alert, skeleton, collapsible, dialog, input
+  - _Requirements: 6.4_
+- [x] 1.4 Theme setup: replace default `create-next-app` landing page with a branded
+      placeholder, add Inter (body) / Space Grotesk (heading) fonts via `next/font`,
+      and apply the project color palette
+      (https://colorhunt.co/palette/e8edf22c3947547a95c2a56d) across light/dark theme
+      tokens in `app/globals.css`
   - _Requirements: 6.4_
 
 - [ ] 2. Types, API client, and data layer

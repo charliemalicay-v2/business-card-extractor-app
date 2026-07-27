@@ -20,6 +20,7 @@ test("uploading a no-QR card lands on the confirmed detail view", async ({
       url.origin === API_ORIGIN &&
       new RegExp(`^/cards/${confirmedNoQrCard.id}$`).test(url.pathname),
     async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
       await route.fulfill({ status: 200, json: confirmedNoQrCard });
     }
   );

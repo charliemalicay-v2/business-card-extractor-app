@@ -24,6 +24,9 @@ export const handlers = [
     );
   }),
 
+  // Not pagination-aware — always echoes page: 1, page_size: 10 regardless of
+  // the request's actual params. Tests needing real pagination behavior
+  // override this via `server.use(...)` (see app/cards/page.test.tsx).
   http.get(`${BASE_URL}/cards`, ({ request }) => {
     const url = new URL(request.url);
     const status = url.searchParams.get("status");

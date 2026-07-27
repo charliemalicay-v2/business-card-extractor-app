@@ -21,6 +21,7 @@ test("uploading a conflicting card resolves to confirmed", async ({
       url.origin === API_ORIGIN &&
       new RegExp(`^/cards/${needsReviewCard.id}$`).test(url.pathname),
     async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
       await route.fulfill({ status: 200, json: needsReviewCard });
     }
   );
@@ -30,6 +31,7 @@ test("uploading a conflicting card resolves to confirmed", async ({
       url.origin === API_ORIGIN &&
       new RegExp(`^/cards/${needsReviewCard.id}/review$`).test(url.pathname),
     async (route) => {
+      if (route.request().method() !== "PATCH") return route.fallback();
       const body = route.request().postDataJSON();
       expect(body).toEqual({ company: "Acme Corporation" });
       await route.fulfill({ status: 200, json: resolvedCard });

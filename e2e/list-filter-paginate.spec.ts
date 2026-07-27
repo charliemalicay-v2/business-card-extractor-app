@@ -19,6 +19,7 @@ test("list view filters, paginates, and navigates to a record", async ({
   await page.route(
     (url) => url.origin === API_ORIGIN && url.pathname === "/cards",
     async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
       const requestUrl = new URL(route.request().url());
       const status = requestUrl.searchParams.get("status");
       const pageParam = Number(requestUrl.searchParams.get("page") ?? "1");
@@ -42,6 +43,7 @@ test("list view filters, paginates, and navigates to a record", async ({
   await page.route(
     (url) => url.origin === API_ORIGIN && /^\/cards\/review-1$/.test(url.pathname),
     async (route) => {
+      if (route.request().method() !== "GET") return route.fallback();
       await route.fulfill({
         status: 200,
         json: { ...confirmedNoQrCard, id: "review-1", status: "needs_review" },

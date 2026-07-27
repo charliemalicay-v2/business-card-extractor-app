@@ -173,32 +173,76 @@ Traces to `requirements.md` and `design.md` in this same directory.
     resets to page 1 and re-filters, row click navigates to the right detail URL —
     zero console errors across all 9 assertions
 
-- [ ] 8. Cross-cutting polish
-- [ ] 8.1 Verify no auth headers/tokens anywhere in the API client or hooks
+- [x] 8. Cross-cutting polish
+- [x] 8.1 Verify no auth headers/tokens anywhere in the API client or hooks
+  - Grepped the whole codebase for `Authorization`, `Bearer`, `apiKey`, `token`,
+    `credentials`, `localStorage`/`sessionStorage`/`cookie` (case-insensitive) —
+    zero matches anywhere in `lib/` or the rest of the app
   - _Requirements: 5.4_
-- [ ] 8.2 Audit codebase to confirm no client-side re-implementation of
+- [x] 8.2 Audit codebase to confirm no client-side re-implementation of
       whitespace/case conflict-detection logic — all status reads come from API
       response fields
+  - Only hit for `.trim()`/`toLowerCase`/etc. was `ConflictResolver.tsx`'s
+    `.trim()` on the operator's own custom-text input (legitimate "is this empty"
+    validation for enabling submit, not conflict re-derivation); no code anywhere
+    compares `ocr_llm_value`/`qr_value` directly
   - _Requirements: 5.5_
-- [ ] 8.3 Add basic top-level nav between Upload and List pages
+- [x] 8.3 Add basic top-level nav between Upload and List pages
+  - `components/layout/TopNav.tsx`, wired into `app/layout.tsx`; "Records" link
+    stays active while viewing `/cards/[id]` detail pages too (via
+    `pathname.startsWith`), not just the list itself
+  - Verified end-to-end with Playwright: nav renders, active-state highlighting
+    correct on both routes, navigation works both directions, zero console errors
+    across 8 assertions
   - _Requirements: (supports 1, 4 usability, not a hard requirement)_
 
-- [ ] 9. Testing
-- [ ] 9.1 Unit tests: `lib/api/errors.ts` mapping, `ConflictResolver`
+- [x] 9. Testing
+  - Test infra added: Vitest + React Testing Library + MSW for unit/integration,
+    Playwright for E2E; `npm test` / `test:watch` / `test:e2e` scripts
+- [x] 9.1 Unit tests: `lib/api/errors.ts` mapping, `ConflictResolver`
       resolution-building logic, pagination math helper
+  - Extracted the inline pagination calc from `app/cards/page.tsx` into
+    `lib/pagination.ts` (`getTotalPages`) first, to make it unit-testable
+  - 23 tests across `lib/api/errors.test.ts`, `lib/pagination.test.ts`,
+    `components/cards/ConflictResolver.test.tsx`
   - _Requirements: 5.1, 3.2, 4.5_
-- [ ] 9.2 Set up MSW with handlers matching `API_USAGE.md` request/response shapes for
+- [x] 9.2 Set up MSW with handlers matching `API_USAGE.md` request/response shapes for
       all four endpoints (success + documented error cases)
+  - `test/msw/` — fixtures matching `API_USAGE.md`'s documented examples exactly
+    (Scenario 1 confirmed/no-QR, Scenario 3 needs_review/conflict), default
+    handlers for all four endpoints, plus a full `errorHandlers` set covering
+    every documented error code
+  - Fixed while wiring this up: `apiClient`'s `baseURL` resolved to `undefined`
+    under Vitest (`.env.local` isn't loaded outside Next's runtime), so axios sent
+    relative URLs that never matched MSW's absolute-URL handlers, producing a real
+    "Network Error" — fixed by injecting `NEXT_PUBLIC_API_BASE_URL` via
+    `vitest.config.ts`'s `test.env`
   - _Requirements: 1.6, 2.8, 3.6, 3.7_
-- [ ] 9.3 Integration tests (RTL + MSW): `FieldRow` status branches, review
+- [x] 9.3 Integration tests (RTL + MSW): `FieldRow` status branches, review
       submit-disabled-until-resolved rule, list filter/pagination state transitions
+  - 7 tests across `components/cards/FieldRow.test.tsx`,
+    `app/cards/[id]/page.test.tsx`, `app/cards/page.test.tsx`
+  - Caught a genuine accessibility regression in `components/cards/CardTable.tsx`:
+    rows had `role="button"` on the `<tr>`, which overrides its implicit `row`
+    role, stripping table semantics (row count, arrow-key nav) from screen
+    readers — surfaced as an unexpected `getAllByRole("row")` count mismatch,
+    traced to the real cause rather than loosened to match; fixed by dropping the
+    role override (row stays keyboard-operable via `tabIndex` + `onKeyDown`)
   - _Requirements: 2.3, 3.4, 4.2, 4.5_
-- [ ] 9.4 E2E (Playwright) — flow 1: upload a no-QR card → lands on `confirmed` detail
+- [x] 9.4 E2E (Playwright) — flow 1: upload a no-QR card → lands on `confirmed` detail
       view
+  - `e2e/upload-confirmed.spec.ts`
   - _Requirements: 1.1-1.5, 2.1-2.7_
-- [ ] 9.5 E2E (Playwright) — flow 2: upload a conflicting card → `needs_review` →
+- [x] 9.5 E2E (Playwright) — flow 2: upload a conflicting card → `needs_review` →
       resolve conflict → record becomes `confirmed`
+  - `e2e/upload-review-resolve.spec.ts`
   - _Requirements: 3.1-3.5_
-- [ ] 9.6 E2E (Playwright) — flow 3: list → filter by `needs_review` → paginate → open
+- [x] 9.6 E2E (Playwright) — flow 3: list → filter by `needs_review` → paginate → open
       a record
+  - `e2e/list-filter-paginate.spec.ts`; API mocked via `page.route()`, scoped to
+    `url.origin === API_ORIGIN` — an earlier pathname-only predicate accidentally
+    intercepted Next's own same-origin client navigation too, corrupting routing
+    into raw JSON page dumps; fixed by adding the origin check
   - _Requirements: 4.1-4.6_
+  - Final verification: `tsc --noEmit`, `npm run lint`, `vitest run` (30/30),
+    `playwright test` (3/3), and `npm run build` all pass together

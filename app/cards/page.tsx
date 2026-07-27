@@ -13,6 +13,7 @@ import { CardTable } from "@/components/cards/CardTable";
 import { NeedsReviewBadgeCount } from "@/components/cards/NeedsReviewBadgeCount";
 import { ApiErrorAlert } from "@/components/shared/ApiErrorAlert";
 import { useCards } from "@/lib/hooks/useCards";
+import { getTotalPages } from "@/lib/pagination";
 
 const PAGE_SIZE = 10;
 
@@ -37,7 +38,7 @@ export default function CardsListPage() {
     setPage(1);
   }
 
-  const totalPages = data ? Math.max(1, Math.ceil(data.total / PAGE_SIZE)) : 1;
+  const totalPages = data ? getTotalPages(data.total, PAGE_SIZE) : 1;
 
   return (
     <div className="flex flex-1 items-start justify-center p-8">

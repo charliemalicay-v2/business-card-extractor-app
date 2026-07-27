@@ -21,27 +21,30 @@ Traces to `requirements.md` and `design.md` in this same directory.
       tokens in `app/globals.css`
   - _Requirements: 6.4_
 
-- [ ] 2. Types, API client, and data layer
-- [ ] 2.1 Define types in `lib/types.ts`: `FieldStatus`, `RecordStatus`, `FieldValue`,
+- [x] 2. Types, API client, and data layer
+- [x] 2.1 Define types in `lib/types.ts`: `FieldStatus`, `RecordStatus`, `FieldValue`,
       `QrInfo`, `CardFields`, `CardResponse`, `CardListItem`, `ListResponse<T>`,
       `ApiError`
   - _Requirements: 6.3, design "Data Models"_
-- [ ] 2.2 Create `lib/api/client.ts`: axios instance with `baseURL` from env, response
+- [x] 2.2 Create `lib/api/client.ts`: axios instance with `baseURL` from env, response
       interceptor normalizing errors to `ApiError`
   - _Requirements: 6.2, 6.5, 5.1_
-- [ ] 2.3 Create `lib/api/errors.ts`: `ERROR_COPY` map (title + retryable per
+- [x] 2.3 Create `lib/api/errors.ts`: `ERROR_COPY` map (title + retryable per
       `error_code`) covering `unsupported_format`, `file_too_large`, `invalid_image`,
       `not_a_business_card`, `ocr_no_text`, `extraction_service_unavailable`,
       `persistence_failed`, `record_not_found`, `invalid_review_payload`, plus an
       `unknown_error` fallback
   - _Requirements: 5.1, 5.2, 1.6, 3.6, 3.7, 2.8_
-- [ ] 2.4 Create `lib/api/cards.ts`: `uploadCard`, `getCard`, `listCards`,
+- [x] 2.4 Create `lib/api/cards.ts`: `uploadCard`, `getCard`, `listCards`,
       `resolveReview` typed functions
   - _Requirements: 1.1, 2.1, 3.3, 4.1, 4.2_
-- [ ] 2.5 Create `lib/query-keys.ts` centralized query key factory
+- [x] 2.5 Create `lib/query-keys.ts` centralized query key factory
   - _Requirements: 6.3_
-- [ ] 2.6 Create hooks: `useCard`, `useCards`, `useUploadCard`, `useResolveReview` in
+- [x] 2.6 Create hooks: `useCard`, `useCards`, `useUploadCard`, `useResolveReview` in
       `lib/hooks/`, including cache invalidation/`setQueryData` per design.md
+  - Known follow-up: `useResolveReview`'s `invalidateQueries(cardsAll())` also
+    invalidates the just-set `card(id)` query (prefix match), causing one redundant
+    refetch after review resolution — flagged in PR #2 review, non-blocking
   - _Requirements: 6.3, 3.5_
 
 - [ ] 3. Shared UI components

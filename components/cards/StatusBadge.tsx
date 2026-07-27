@@ -1,4 +1,4 @@
-import { CheckCircle2, CircleDashed, CircleAlert } from "lucide-react";
+import { CheckCircle2, CircleDashed, CircleAlert, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { FieldStatus, RecordStatus } from "@/lib/types";
 
@@ -7,14 +7,25 @@ const RECORD_STATUS_LABEL: Record<RecordStatus, string> = {
   needs_review: "Needs review",
 };
 
+// "needs_review" means pending a human decision, not an error — use the
+// warm accent (warning) treatment rather than destructive/red so it reads
+// as "needs attention" and stays visually distinct from a real conflict.
 export function StatusBadge({ status }: { status: RecordStatus }) {
-  return (
-    <Badge variant={status === "confirmed" ? "secondary" : "destructive"}>
-      {status === "confirmed" ? (
+  if (status === "confirmed") {
+    return (
+      <Badge variant="secondary">
         <CheckCircle2 data-icon="inline-start" />
-      ) : (
-        <CircleAlert data-icon="inline-start" />
-      )}
+        {RECORD_STATUS_LABEL[status]}
+      </Badge>
+    );
+  }
+
+  return (
+    <Badge
+      variant="outline"
+      className="border-accent/60 bg-accent/10 text-accent-foreground"
+    >
+      <Clock data-icon="inline-start" />
       {RECORD_STATUS_LABEL[status]}
     </Badge>
   );

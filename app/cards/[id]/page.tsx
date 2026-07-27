@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { FileQuestion } from "lucide-react";
 import {
@@ -9,12 +10,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/cards/StatusBadge";
 import { FieldRow } from "@/components/cards/FieldRow";
 import { QrIndicator } from "@/components/cards/QrIndicator";
 import { RawOcrText } from "@/components/cards/RawOcrText";
 import { ApiErrorAlert } from "@/components/shared/ApiErrorAlert";
 import { useCard } from "@/lib/hooks/useCard";
+import { useResolveReview } from "@/lib/hooks/useResolveReview";
 import type { CardFields } from "@/lib/types";
 
 const FIELD_ORDER: (keyof CardFields)[] = [
@@ -33,6 +36,26 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
 export default function CardDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { data: card, isLoading, isError, error } = useCard(id);
+  const [resolutions, setResolutions] = useState<Record<string, string>>({});
+  const resolveReview = useResolveReview(id);
+
+  function handleResolutionChange(field: string, value: string | undefined) {
+    setResolutions((prev) => {
+      const next = { ...prev };
+      if (value === undefined) {
+        delete next[field];
+      } else {
+        next[field] = value;
+      }
+      return next;
+    });
+  }
+
+  function handleSubmitReview() {
+    resolveReview.mutate(resolutions, {
+      onSuccess: () => setResolutions({}),
+    });
+  }
 
   if (isLoading) {
     return (
@@ -97,9 +120,34 @@ export default function CardDetailPage() {
         <CardContent className="flex flex-col gap-4">
           <div>
             {FIELD_ORDER.map((field) => (
-              <FieldRow key={field} field={field} value={card.fields[field]} />
+              <FieldRow
+                key={field}
+                field={field}
+                value={card.fields[field]}
+                onResolutionChange={(value) =>
+                  handleResolutionChange(field, value)
+                }
+              />
             ))}
           </div>
+
+          {card.status === "needs_review" && (
+            <div className="flex flex-col gap-2 border-t border-border pt-3">
+              {resolveReview.isError && (
+                <ApiErrorAlert error={resolveReview.error} />
+              )}
+              <Button
+                type="button"
+                onClick={handleSubmitReview}
+                disabled={
+                  Object.keys(resolutions).length === 0 ||
+                  resolveReview.isPending
+                }
+              >
+                {resolveReview.isPending ? "Saving…" : "Save review"}
+              </Button>
+            </div>
+          )}
 
           {Object.keys(card.optional_fields).length > 0 && (
             <div className="flex flex-col gap-1 border-t border-border pt-3">

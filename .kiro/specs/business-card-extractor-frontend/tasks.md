@@ -112,38 +112,66 @@ Traces to `requirements.md` and `design.md` in this same directory.
       `RawOcrText`, and locale-formatted `created_at`/`updated_at`
   - _Requirements: 2.2, 2.4, 2.5, 2.6, 2.7_
 
-- [ ] 6. Review resolution flow
-- [ ] 6.1 `ConflictResolver` component: choice of `ocr_llm_value` / `qr_value` /
+- [x] 6. Review resolution flow
+- [x] 6.1 `ConflictResolver` component: choice of `ocr_llm_value` / `qr_value` /
       custom free text, exposes resolved value via callback
+  - `components/cards/ConflictResolver.tsx` — click-to-select OCR/QR candidate
+    buttons + a "Custom" toggle revealing a free-text input; reports resolved
+    value (or `undefined` when unset) via `onChange`
+  - Fixed during review: candidate buttons used `disabled={!value}` (falsy check),
+    which would wrongly disable a candidate whose value is `""` rather than
+    genuinely absent — changed to `== null` to match the actual `string | null` type
   - _Requirements: 3.2_
-- [ ] 6.2 Detail page aggregates all `ConflictResolver` outputs into a single
+- [x] 6.2 Detail page aggregates all `ConflictResolver` outputs into a single
       `resolutions` object; hide review controls entirely when `status !== 'needs_review'`
+  - `app/cards/[id]/page.tsx` — `FieldRow` now takes an `onResolutionChange` prop,
+    only meaningful for `conflict` fields
   - _Requirements: 3.1, 3.3_
-- [ ] 6.3 Submit button disabled until `resolutions` is non-empty; wire to
+- [x] 6.3 Submit button disabled until `resolutions` is non-empty; wire to
       `useResolveReview(id)`
   - _Requirements: 3.4_
-- [ ] 6.4 On success: update detail view from response, reflect flip to `confirmed`
+- [x] 6.4 On success: update detail view from response, reflect flip to `confirmed`
       immediately, invalidate list query; show success toast
+  - Toast added in `useResolveReview`'s `onSuccess`, worded differently depending on
+    whether the record fully flipped to `confirmed` or still has remaining conflicts
   - _Requirements: 3.5_
-- [ ] 6.5 Handle `invalid_review_payload` (400) and `record_not_found` (404) error
+- [x] 6.5 Handle `invalid_review_payload` (400) and `record_not_found` (404) error
       responses via `ApiErrorAlert`
   - _Requirements: 3.6, 3.7_
+  - Verified end-to-end with Playwright + Chromium against a mock backend matching
+    `API_USAGE.md`'s response shapes: load → select QR candidate → submit disabled
+    → enabled → PATCH → flips to `confirmed` → toast → controls disappear, zero
+    console errors. Stronger verification than Tasks 4-5's static-only checks; this
+    setup is a reasonable seed for Task 9's Playwright suite
 
-- [ ] 7. List view (`/cards`)
-- [ ] 7.1 `CardListFilters`: status `Select` (all/confirmed/needs_review) driving
+- [x] 7. List view (`/cards`)
+- [x] 7.1 `CardListFilters`: status `Select` (all/confirmed/needs_review) driving
       `useCards` params
+  - Fixed the same `useQuery` error-typing gap as `useCard` proactively, in
+    `lib/hooks/useCards.ts`, before anything depended on `error.error_code`
   - _Requirements: 4.2_
-- [ ] 7.2 `CardTable`: renders `items` (no `raw_ocr_text` expected), row click
+- [x] 7.2 `CardTable`: renders `items` (no `raw_ocr_text` expected), row click
       navigates to detail
+  - `components/cards/CardTable.tsx` — row is keyboard-accessible
+    (`role="button"`, `tabIndex`, Enter/Space) in addition to click
   - _Requirements: 4.1, 4.3, 4.4_
-- [ ] 7.3 Pagination controls using `total`/`page`/`page_size` from response
+- [x] 7.3 Pagination controls using `total`/`page`/`page_size` from response
+  - Simple Previous/Next buttons + "Page X of Y (N total)" summary; changing the
+    status filter resets to page 1
   - _Requirements: 4.5_
-- [ ] 7.4 Empty-state messaging varied by active filter
+- [x] 7.4 Empty-state messaging varied by active filter
   - _Requirements: 4.6_
-- [ ] 7.5 `NeedsReviewBadgeCount`: small query surfacing `needs_review` total as a badge
+- [x] 7.5 `NeedsReviewBadgeCount`: small query surfacing `needs_review` total as a badge
+  - `components/cards/NeedsReviewBadgeCount.tsx` — `page_size: 1` query just for the
+    `total`; renders nothing when zero
   - _Requirements: 4.7_
-- [ ] 7.6 Loading skeleton for list fetch
+- [x] 7.6 Loading skeleton for list fetch
   - _Requirements: 5.3_
+  - Verified end-to-end with Playwright against a mock backend serving 15 records
+    across two pages: correct badge count, correct pagination summary/row counts on
+    both pages, Next correctly disables on the last page, filter switch correctly
+    resets to page 1 and re-filters, row click navigates to the right detail URL —
+    zero console errors across all 9 assertions
 
 - [ ] 8. Cross-cutting polish
 - [ ] 8.1 Verify no auth headers/tokens anywhere in the API client or hooks

@@ -8,7 +8,7 @@ import {
 export default function Home() {
   return (
     <div className="flex flex-1 items-center justify-center p-8">
-      <Card className="max-w-md">
+      <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Business Card Extractor</CardTitle>
           <CardDescription>

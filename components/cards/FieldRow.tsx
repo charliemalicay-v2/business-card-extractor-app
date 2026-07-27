@@ -1,4 +1,5 @@
 import { FieldStatusBadge } from "@/components/cards/StatusBadge";
+import { ConflictResolver } from "@/components/cards/ConflictResolver";
 import type { CardFields, FieldValue } from "@/lib/types";
 
 const FIELD_LABEL: Record<keyof CardFields, string> = {
@@ -12,9 +13,11 @@ const FIELD_LABEL: Record<keyof CardFields, string> = {
 export function FieldRow({
   field,
   value,
+  onResolutionChange,
 }: {
   field: keyof CardFields;
   value: FieldValue;
+  onResolutionChange?: (value: string | undefined) => void;
 }) {
   return (
     <div className="flex flex-col gap-1 border-b border-border py-3 last:border-b-0">
@@ -26,16 +29,11 @@ export function FieldRow({
       </div>
 
       {value.status === "conflict" ? (
-        <div className="grid grid-cols-2 gap-2 rounded-lg bg-muted/50 p-2 text-sm">
-          <div>
-            <p className="text-xs text-muted-foreground">Printed / OCR</p>
-            <p>{value.ocr_llm_value ?? "—"}</p>
-          </div>
-          <div>
-            <p className="text-xs text-muted-foreground">QR code</p>
-            <p>{value.qr_value ?? "—"}</p>
-          </div>
-        </div>
+        <ConflictResolver
+          ocrValue={value.ocr_llm_value}
+          qrValue={value.qr_value}
+          onChange={onResolutionChange ?? (() => {})}
+        />
       ) : (
         <div>
           <p className="text-sm">{value.value ?? "—"}</p>

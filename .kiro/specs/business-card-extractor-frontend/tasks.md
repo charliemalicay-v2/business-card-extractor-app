@@ -67,17 +67,28 @@ Traces to `requirements.md` and `design.md` in this same directory.
     all real usage sites (Tasks 4-6)
   - _Requirements: 1.6, 5.1, 5.2_
 
-- [ ] 4. Upload flow (`/`)
-- [ ] 4.1 `UploadDropzone`: file input + drag-and-drop, client-side content-type and
+- [x] 4. Upload flow (`/`)
+- [x] 4.1 `UploadDropzone`: file input + drag-and-drop, client-side content-type and
       10MB size pre-checks blocking submission with inline messages
+  - `components/upload/UploadDropzone.tsx` — pre-checks reuse the existing
+    `unsupported_format`/`file_too_large` `ERROR_COPY` entries via `ApiErrorAlert`
   - _Requirements: 1.1, 1.2, 1.3_
-- [ ] 4.2 Wire `UploadDropzone` to `useUploadCard`; loading state disables
+- [x] 4.2 Wire `UploadDropzone` to `useUploadCard`; loading state disables
       re-submission; on success navigate to `/cards/[id]`
+  - Fixed a `useMutation` typing gap while wiring this up: the hook defaulted its
+    error type to `Error` instead of the `ApiError` the axios interceptor actually
+    rejects with — `useUploadCard`/`useResolveReview` now explicitly type
+    `useMutation<CardResponse, ApiError, ...>`
   - _Requirements: 1.4, 1.5_
-- [ ] 4.3 Wire mutation error state to `ApiErrorAlert` with retry for
+- [x] 4.3 Wire mutation error state to `ApiErrorAlert` with retry for
       `extraction_service_unavailable` / `persistence_failed`
+  - Retry re-runs validation + upload against the last selected file
   - _Requirements: 1.6_
-- [ ] 4.4 Build `app/page.tsx` composing the above
+- [x] 4.4 Build `app/page.tsx` composing the above
+  - Also fixed an event-bubbling bug found during review: the hidden file input
+    lived inside the `role="button"` dropzone div, so a keyboard Enter on the input
+    itself double-triggered the native file picker; fixed with `tabIndex={-1}` +
+    `stopPropagation()` on the input
   - _Requirements: 1.1-1.6_
 
 - [ ] 5. Record detail view (`/cards/[id]`)

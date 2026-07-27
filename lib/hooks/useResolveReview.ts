@@ -1,11 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { resolveReview } from "@/lib/api/cards";
 import { queryKeys } from "@/lib/query-keys";
+import type { ApiError, CardResponse } from "@/lib/types";
 
 export function useResolveReview(id: string) {
   const queryClient = useQueryClient();
 
-  return useMutation({
+  return useMutation<CardResponse, ApiError, Record<string, string>>({
     mutationFn: (resolutions: Record<string, string>) =>
       resolveReview(id, resolutions),
     onSuccess: (data) => {

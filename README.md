@@ -12,8 +12,9 @@ Full spec (requirements, design, tasks) lives in
 ## Setup
 
 Requires Node 20+ and the
-[business-card-extractor-api](../business-card-extractor-api) running locally
-(defaults to `http://localhost:8000`).
+[business-card-extractor-api](https://github.com/charliemalicay-v2/business-card-extractor-api)
+running locally (defaults to `http://localhost:8000`). Clone it as a sibling
+directory to this repo if you're working on both locally.
 
 ```bash
 npm ci
@@ -102,6 +103,14 @@ release branch. The next task starts from a fresh `release-x.y.z` branch off
 an up-to-date `main`.
 
 ## Release notes
+
+### 1.0.0 — Official v1 launch ([#8](../../pull/8))
+Closes out the full frontend spec
+(`.kiro/specs/business-card-extractor-frontend/`): upload, record detail,
+review resolution, and list views are all implemented, tested (unit,
+integration, and E2E), and running in CI. This release adds the setup/
+running/testing documentation and release notes in this README — no
+application code changes.
 
 ### 0.7.0 — Cross-cutting polish, nav, full test suite ([#7](../../pull/7))
 - Audited for auth headers/tokens and client-side conflict-detection

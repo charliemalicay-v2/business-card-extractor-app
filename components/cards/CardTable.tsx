@@ -34,7 +34,6 @@ export function CardTable({ items }: { items: CardListItem[] }) {
         {items.map((item) => (
           <TableRow
             key={item.id}
-            role="button"
             tabIndex={0}
             onClick={() => router.push(`/cards/${item.id}`)}
             onKeyDown={(event) => {

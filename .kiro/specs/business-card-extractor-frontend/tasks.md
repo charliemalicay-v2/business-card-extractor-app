@@ -91,15 +91,24 @@ Traces to `requirements.md` and `design.md` in this same directory.
     `stopPropagation()` on the input
   - _Requirements: 1.1-1.6_
 
-- [ ] 5. Record detail view (`/cards/[id]`)
-- [ ] 5.1 `app/cards/[id]/page.tsx`: fetch via `useCard(id)`, loading skeleton, and
+- [x] 5. Record detail view (`/cards/[id]`)
+- [x] 5.1 `app/cards/[id]/page.tsx`: fetch via `useCard(id)`, loading skeleton, and
       dedicated not-found panel when `error_code === 'record_not_found'`
+  - Fixed the same `useQuery` error-typing gap as Task 4's mutation hooks:
+    `useCard` now explicitly types `useQuery<CardResponse, ApiError>` so
+    `error.error_code` is usable for the not-found branch
+  - Generic `ApiErrorAlert` handles any other fetch error; guards against `card`
+    being `undefined`/`error` being `null` in edge cases `tsc` correctly flagged
   - _Requirements: 2.1, 2.8, 5.3_
-- [ ] 5.2 `FieldRow` component: switches rendering on `field.status`
+- [x] 5.2 `FieldRow` component: switches rendering on `field.status`
       (confirmed/unverified plain value with indicator; conflict renders
       `ConflictResolver` instead of `value`)
+  - `components/cards/FieldRow.tsx` — for now, `conflict` renders a read-only
+    OCR-vs-QR side-by-side display (Requirement 2.3 scope); swapping in the
+    interactive `ConflictResolver` is Task 6.1's job, this component is built to
+    slot it in without rework
   - _Requirements: 2.3_
-- [ ] 5.3 Render `optional_fields` section conditionally, `StatusBadge`, `QrIndicator`,
+- [x] 5.3 Render `optional_fields` section conditionally, `StatusBadge`, `QrIndicator`,
       `RawOcrText`, and locale-formatted `created_at`/`updated_at`
   - _Requirements: 2.2, 2.4, 2.5, 2.6, 2.7_
 

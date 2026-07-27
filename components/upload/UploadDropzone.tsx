@@ -82,24 +82,26 @@ export function UploadDropzone() {
           isDragActive && "border-primary bg-muted/50"
         )}
       >
-        {isPending ? (
-          <>
-            <Loader2 className="size-6 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground">
-              Extracting card details…
-            </p>
-          </>
-        ) : (
-          <>
-            <UploadCloud className="size-6 text-muted-foreground" />
-            <p className="text-sm font-medium">
-              Drop a business card image, or click to browse
-            </p>
-            <p className="text-xs text-muted-foreground">
-              JPEG, PNG, etc. Up to 10MB.
-            </p>
-          </>
-        )}
+        <div className="pointer-events-none flex flex-col items-center gap-2">
+          {isPending ? (
+            <>
+              <Loader2 className="size-6 animate-spin text-primary" />
+              <p className="text-sm text-muted-foreground">
+                Extracting card details…
+              </p>
+            </>
+          ) : (
+            <>
+              <UploadCloud className="size-6 text-muted-foreground" />
+              <p className="text-sm font-medium">
+                Drop a business card image, or click to browse
+              </p>
+              <p className="text-xs text-muted-foreground">
+                JPEG, PNG, etc. Up to 10MB.
+              </p>
+            </>
+          )}
+        </div>
         <input
           ref={inputRef}
           type="file"

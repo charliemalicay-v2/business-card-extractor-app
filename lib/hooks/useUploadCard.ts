@@ -10,7 +10,7 @@ export function useUploadCard() {
   return useMutation({
     mutationFn: uploadCard,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.cardsAll() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.cardsLists() });
       router.push(`/cards/${data.id}`);
     },
   });

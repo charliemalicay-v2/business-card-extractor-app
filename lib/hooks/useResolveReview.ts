@@ -10,7 +10,7 @@ export function useResolveReview(id: string) {
       resolveReview(id, resolutions),
     onSuccess: (data) => {
       queryClient.setQueryData(queryKeys.card(id), data);
-      queryClient.invalidateQueries({ queryKey: queryKeys.cardsAll() });
+      queryClient.invalidateQueries({ queryKey: queryKeys.cardsLists() });
     },
   });
 }
